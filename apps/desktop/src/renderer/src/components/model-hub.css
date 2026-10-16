@@ -1,0 +1,59 @@
+.model-hub-page { display: grid; gap: 18px; min-width: 0; }
+.model-panel { display: grid; align-content: start; gap: 14px; min-width: 0; padding: 20px; border: 1px solid var(--line); border-top: 2px solid var(--ink); background: var(--paper); }
+.model-panel .section-label { color: var(--muted); padding-bottom: 0; gap: 12px; }
+.model-panel p, .model-reasoning p { margin: 0; overflow-wrap: anywhere; }
+.model-intro { border-top-color: var(--yellow); }
+.model-muted { color: var(--muted); font-size: 12px; }
+.model-config-layout { display: grid; grid-template-columns: minmax(200px, .7fr) minmax(0, 2fr); gap: 18px; align-items: start; }
+.model-provider-list { display: grid; gap: 8px; }
+.model-provider-card { display: grid; gap: 5px; width: 100%; padding: 12px; text-align: left; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-left: 3px solid transparent; overflow-wrap: anywhere; }
+.model-provider-card:hover { background: var(--panel); }
+.model-provider-card.is-selected { border-left-color: var(--yellow); border-color: var(--ink); background: var(--surface); }
+.model-provider-card.is-selected strong::before { content: ''; display: inline-block; width: 7px; height: 7px; margin-right: 7px; background: var(--yellow); }
+.model-provider-card span, .model-provider-card small { color: var(--muted); font-size: 11px; }
+.model-panel label, .model-reasoning label { display: grid; gap: 6px; min-width: 0; font-size: 12px; }
+.model-fields { display: grid; gap: 14px; min-width: 0; margin: 0; padding: 0; border: 0; }
+.model-panel input:not([type='checkbox']), .model-panel select, .model-panel textarea, .model-reasoning input:not([type='checkbox']), .model-reasoning select { width: 100%; min-width: 0; padding: 9px 10px; font: inherit; }
+.model-panel textarea { resize: vertical; min-height: 78px; }
+.model-form-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; align-items: end; }
+.model-test-selectors { grid-template-columns: minmax(0, 1fr) auto; }
+.model-actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.model-panel label.model-check, .model-reasoning label.model-check { display: flex; align-items: flex-start; gap: 9px; }
+.model-check input { width: 16px; height: 16px; margin: 2px 0 0; flex: 0 0 auto; accent-color: var(--yellow); }
+.model-boundary { border-left: 3px solid var(--yellow); padding: 10px 12px; background: var(--surface); font-size: 12px; overflow-wrap: anywhere; }
+.model-boundary .model-actions { margin-top: 10px; }
+.model-error { margin: 0; padding: 10px 12px; border: 1px solid var(--error); color: var(--error); background: var(--error-bg); font-size: 12px; overflow-wrap: anywhere; }
+.model-notice { margin: 0; padding: 10px 12px; border-left: 3px solid var(--yellow); background: var(--paper); font-size: 12px; }
+.model-health { display: grid; gap: 4px; padding: 10px 12px; border: 1px solid var(--line); border-left: 3px solid var(--yellow); font-size: 12px; overflow-wrap: anywhere; }
+.model-health.is-failed { border-left-color: var(--error); }
+.model-test-result { display: grid; gap: 10px; min-width: 0; }
+.model-panel pre { max-height: 320px; margin: 0; padding: 12px; overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere; border: 1px solid var(--line); background: var(--surface); font: 12px/1.6 Consolas, monospace; }
+.model-calls-heading { display: flex; gap: 16px; align-items: start; justify-content: space-between; }
+.model-calls-heading > div { display: grid; gap: 6px; min-width: 0; }
+.model-call { display: grid; gap: 10px; min-width: 0; border: 1px solid var(--line); padding: 14px; background: var(--surface); }
+.model-call header { display: flex; gap: 12px; justify-content: space-between; align-items: start; overflow-wrap: anywhere; }
+.model-call-status { flex-shrink: 0; color: var(--muted); font-size: 11px; }
+.model-call-status.status-running { padding: 2px 6px; background: var(--yellow); color: var(--accent-text); }
+.model-call-status.status-failed { color: var(--error); }
+.model-call-meta { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin: 0; font-size: 12px; }
+.model-call-meta div { min-width: 0; }
+.model-call-meta dt { color: var(--muted); font-size: 11px; }
+.model-call-meta dd { margin: 3px 0 0; overflow-wrap: anywhere; }
+.model-call details { display: grid; gap: 8px; }
+.model-call summary { cursor: pointer; font-size: 12px; }
+.model-call details code { display: block; padding: 8px 0; color: var(--muted); overflow-wrap: anywhere; font-size: 11px; }
+.model-reasoning { display: grid; gap: 12px; min-width: 0; padding: 12px; margin: 0; border: 1px solid var(--line); background: var(--surface); }
+.model-reasoning legend { padding: 0 6px; font-size: 12px; font-weight: 600; }
+.model-reasoning-selection { display: grid; gap: 10px; min-width: 0; padding: 12px; border: 1px solid var(--line); background: var(--paper); }
+.model-reasoning-selection .model-form-row { grid-template-columns: minmax(0, 1fr) auto; }
+@media (max-width: 1100px) {
+  .model-config-layout { grid-template-columns: 1fr; }
+  .model-provider-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .model-call-meta { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 650px) {
+  .model-panel { padding: 14px; }
+  .model-form-row, .model-test-selectors, .model-reasoning-selection .model-form-row, .model-provider-list { grid-template-columns: 1fr; }
+  .model-calls-heading, .model-call header { align-items: stretch; flex-direction: column; }
+  .model-panel .section-label { align-items: start; flex-direction: column; gap: 4px; }
+}

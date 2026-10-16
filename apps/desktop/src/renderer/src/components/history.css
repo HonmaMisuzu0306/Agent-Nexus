@@ -1,0 +1,19 @@
+.history-search { display: flex; gap: 10px; align-items: end; margin-bottom: 16px; flex-wrap: wrap; }
+.history-search label { display: grid; gap: 6px; flex: 1; min-width: 180px; }
+.history-diagnostic { display: flex; gap: 12px; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; }
+.event-timeline { display: grid; gap: 10px; min-width: 0; }
+.timeline-controls { display: flex; gap: 6px; flex-wrap: wrap; }
+.event-timeline > label { font-size: 12px; display: grid; }
+.event-timeline input[type="range"] { padding: 0; accent-color: var(--yellow); }
+.virtual-events { height: 380px; overflow: auto; border: 1px solid var(--dark-line); contain: strict; }
+.virtual-event { width: 100%; left: 0; border: 0; border-bottom: 1px solid var(--dark-line); background: transparent; color: inherit; text-align: left; padding: 10px; overflow: hidden; }
+.virtual-event span { font-size: 11px; color: var(--dark-muted); }
+.virtual-event p { font-size: 12px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow-wrap: anywhere; }
+.event-detail { min-width: 0; }
+.event-detail pre { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 11px; max-height: 350px; overflow: auto; }
+.event-search { display: flex; gap: 6px; margin: 10px 0; }
+.event-search input { width: 100%; }
+.inspector .timeline-controls .button-outline { color: var(--dark-text); border-color: var(--dark-line); }
+.inspector { overflow-y: auto; }
+.inspector > header, .inspector > footer, .inspector-summary, .task-info { flex-shrink: 0; }
+.inspector .event-section { flex: 0 0 auto; }

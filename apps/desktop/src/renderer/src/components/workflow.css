@@ -1,0 +1,18 @@
+.workflow-page { display: grid; gap: 16px; padding: 20px; min-width: 0; border: 1px solid var(--line); border-top: 3px solid var(--yellow); background: var(--paper); }
+.workflow-page label, .workflow-fields label { display: grid; gap: 6px; min-width: 0; }
+.workflow-page select, .workflow-page textarea, .workflow-fields select, .workflow-fields textarea { width: 100%; padding: 9px; }
+.workflow-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: end; }
+.workflow-actions > label { flex: 1; min-width: 150px; }
+.workflow-editor { display: grid; gap: 12px; min-width: 0; }
+.workflow-graph { height: 360px; width: 100%; min-width: 0; background: var(--surface); border: 1px solid var(--line); }
+.workflow-graph .react-flow { --xy-node-background-color-default: var(--surface); --xy-node-color-default: var(--ink); --xy-node-border-default: 1px solid var(--line); --xy-edge-stroke-default: var(--muted); --xy-controls-button-background-color-default: var(--paper); --xy-controls-button-color-default: var(--ink); }
+.workflow-graph .react-flow__node { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 12px; border-radius: 0; }
+.workflow-graph .react-flow__node.selected { border: 2px solid var(--ink); background: var(--yellow); color: #151817; }
+.workflow-graph .react-flow__handle { width: 10px; height: 10px; background: var(--ink); }
+.workflow-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.workflow-fields .wide { grid-column: 1 / -1; }
+.workflow-fields fieldset { border: 1px solid var(--line); padding: 12px; }
+.workflow-fields label.workflow-check { display: flex; gap: 8px; align-items: center; }
+.workflow-check input { width: 16px; height: 16px; flex-shrink: 0; accent-color: #a49600; }
+.workflow-hint { font-size: 12px; color: var(--muted); }
+@media(max-width: 700px) { .workflow-page { padding: 12px; } .workflow-fields { grid-template-columns: minmax(0,1fr); } .workflow-graph { height: 300px; } }

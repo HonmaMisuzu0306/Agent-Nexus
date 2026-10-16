@@ -1,0 +1,113 @@
+{
+  "name": "agent-nexus",
+  "version": "1.0.0-beta.1",
+  "private": true,
+  "description": "Local multi-agent desktop workbench — 1.0 beta",
+  "author": "Agent Nexus",
+  "main": "out/main/index.js",
+  "scripts": {
+    "dev": "electron-vite dev",
+    "start": "electron .",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "test:e2e": "npm run build && node tests/electron.e2e.mjs",
+    "test:visual": "npm run build && node tests/ui-visual.mjs",
+    "test:dev": "node tests/dev-smoke.mjs",
+    "test:packaged": "node tests/electron.e2e.mjs \"release/win-unpacked/Agent Nexus.exe\"",
+    "test:m2": "npm run build && node tests/m2.e2e.mjs",
+    "test:m2:packaged": "node tests/m2.e2e.mjs \"release/win-unpacked/Agent Nexus.exe\"",
+    "test:m3": "npm run build && node tests/m3.e2e.mjs",
+    "test:m3:packaged": "node tests/m3-packaged.e2e.mjs",
+    "test:m35": "npm run build && node tests/m35.e2e.mjs",
+    "test:m35:packaged": "node tests/m35-packaged.e2e.mjs",
+    "test:m4": "npm run build && node tests/m4.e2e.mjs",
+    "test:m4:packaged": "node tests/m4-packaged.e2e.mjs",
+    "prepare:electron": "node -e \"require('electron')\"",
+    "build": "electron-vite build",
+    "build:core": "electron-vite build --config electron.core.config.ts --ignoreConfigWarning",
+    "test:core:electron": "npm run build:core && node tests/run-electron-core.mjs",
+    "package": "npm run build && npm run prepare:electron && electron-builder --win --x64 --dir",
+    "check": "npm run typecheck && npm run lint && npm test && npm run build",
+    "check:core": "npm run typecheck && npm run lint && npm test && npm run test:core:electron",
+    "test:workbuddy": "npm run build && node tests/workbuddy.e2e.mjs",
+    "test:workbuddy:packaged": "node tests/workbuddy.e2e.mjs \"release/win-unpacked/Agent Nexus.exe\"",
+    "test:m5": "npm run build && node tests/m5.e2e.mjs",
+    "build:icon": "node scripts/build-icon.mjs",
+    "package:installer": "npm run build && npm run prepare:electron && electron-builder --win nsis --x64 --publish never",
+    "test:m5:packaged": "node tests/m5-packaged.e2e.mjs",
+    "audit:artifact": "node scripts/audit-artifact.mjs",
+    "test:local:desktop": "node tests/local-1-desktop.e2e.mjs"
+  },
+  "dependencies": {
+    "@radix-ui/react-slot": "^1.2.3",
+    "@xyflow/react": "12.12.0",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.577.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "sql.js": "^1.13.0",
+    "tailwind-merge": "^3.5.0",
+    "zod": "^4.3.0",
+    "zustand": "^5.0.8"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.0",
+    "@tailwindcss/vite": "^4.2.0",
+    "@types/node": "^24.10.0",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "@types/sql.js": "^1.4.9",
+    "@vitejs/plugin-react": "^5.1.0",
+    "electron": "44.7.0",
+    "electron-builder": "^26.0.12",
+    "electron-vite": "5.0.0",
+    "eslint": "^9.39.0",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "playwright": "^1.58.0",
+    "tailwindcss": "^4.2.0",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.55.0",
+    "vite": "^7.3.0",
+    "vitest": "^4.0.18"
+  },
+  "build": {
+    "appId": "local.agentnexus.desktop",
+    "productName": "Agent Nexus",
+    "electronDist": "node_modules/electron/dist",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "out/**/*",
+      "package.json"
+    ],
+    "asarUnpack": [
+      "node_modules/sql.js/dist/sql-wasm.wasm"
+    ],
+    "win": {
+      "signAndEditExecutable": true,
+      "signExecutable": false,
+      "icon": "resources/icon.ico",
+      "requestedExecutionLevel": "asInvoker"
+    },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": false,
+      "allowElevation": false,
+      "packElevateHelper": false,
+      "deleteAppDataOnUninstall": false,
+      "runAfterFinish": false,
+      "createDesktopShortcut": false,
+      "createStartMenuShortcut": true,
+      "artifactName": "Agent-Nexus-Setup-${version}.${ext}",
+      "installerIcon": "resources/icon.ico",
+      "uninstallerIcon": "resources/icon.ico"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HonmaMisuzu0306/Agent-Nexus.git"
+  }
+}

@@ -1,0 +1,32 @@
+import { useEffect, useState } from 'react';
+import type { Provider } from '../../../../../../packages/shared';
+import type { LeaderRun, LeaderView } from '../../../../../../packages/shared/leader';
+import { activeRunStatuses } from '../../../../../../packages/shared/leader';
+import { providers } from '../../../../../../packages/shared/constants';
+import { act, request, useStore } from '../store';
+import { providerMeta } from './AgentPanel';
+import { Button } from './ui/button';
+
+export function MeetingPage() {
+  const snapshot=useStore(s=>s.snapshot);const projectId=snapshot?.settings.projectId;
+  const [topic,setTopic]=useState('');const [leader,setLeader]=useState<Provider>('codex');const [participants,setParticipants]=useState<Provider[]>(['codex','dsh']);const [rounds,setRounds]=useState(1);const [runs,setRuns]=useState<LeaderRun[]>([]);const [selected,setSelected]=useState('');const [view,setView]=useState<LeaderView|null>(null);const [busy,setBusy]=useState(false);
+  useEffect(()=>{setRuns([]);setSelected('');setView(null);},[projectId]);
+  useEffect(()=>{let live=true;if(!projectId)return;const load=async()=>{const list=await request('leader.list',{projectId,offset:0,limit:50});if(!live)return;setRuns(list);const id=selected||list.find(r=>r.meetingId)?.id;if(id){const v=await request('leader.get',{runId:id});if(live)setView(v);}else setView(null);};void load().catch(e=>useStore.getState().setError(e.message));const timer=setInterval(()=>void load().catch(e=>{if(live)useStore.getState().setError(e.message);}),1500);return()=>{live=false;clearInterval(timer);};},[projectId,selected]);
+  const eligible=(p:Provider,asLeader=false)=>{const i=snapshot?.installations.find(i=>i.id===p);return !!i?.capabilities.sendPrompt.supported&&!!i.capabilities.cancel.supported&&(!asLeader||!!i.capabilities.leaderEligible.supported);};
+  const change=(fn:()=>Promise<unknown>)=>act(async()=>{setBusy(true);try{await fn();if(view)setView(await request('leader.get',{runId:view.run.id}));await useStore.getState().refreshTasks();}finally{setBusy(false);}});
+  const meeting=view?.meeting;const run=view?.run;
+  return <div className="leader-page meeting-page"><section className="leader-form" aria-label="会议配置"><div className="section-label">M3.5 / 有限 Agent 会议 <span>2–3 人 · 最多 3 轮</span></div><p>Leader 形成议程，参与者在独立只读会话中讨论，再形成共识、分歧和任务草案。草案不会自动派发，仍需首次计划确认。原生服务会收到话题和讨论资料，费用未知。</p>
+    <label>会议 Leader<select aria-label="会议 Leader" value={leader} onChange={e=>setLeader(e.target.value as Provider)}>{providers.map(p=><option key={p} value={p} disabled={!eligible(p,true)}>{providerMeta[p].name}{eligible(p,true)?'':' · 当前不可用'}</option>)}</select></label>
+    <fieldset><legend>参会 Agents</legend>{providers.map(p=><label className="leader-check" key={p}><input type="checkbox" aria-label={`${providerMeta[p].name} 参会`} checked={participants.includes(p)} disabled={!eligible(p)} onChange={e=>setParticipants(old=>e.target.checked?[...old,p]:old.filter(x=>x!==p))} /><span>{providerMeta[p].name}</span></label>)}</fieldset>
+    <label>轮数上限<select aria-label="会议轮数上限" value={rounds} onChange={e=>setRounds(Number(e.target.value))}>{[1,2,3].map(n=><option key={n} value={n}>{n} 轮</option>)}</select></label>
+    <label>话题<textarea aria-label="会议话题" maxLength={4000} rows={5} value={topic} onChange={e=>setTopic(e.target.value)} placeholder="明确讨论范围、所需决策和可共享资料…" /></label>
+    <Button disabled={busy||!projectId||!topic.trim()||!eligible(leader,true)||participants.length<2||participants.length>3||participants.some(p=>!eligible(p))||runs.some(r=>activeRunStatuses.includes(r.status))} onClick={()=>change(async()=>{if(!projectId)return;const r=await request('leader.start',{projectId,goal:topic,leader,workers:participants,mode:'real',control:'supervised',allowWrites:false,stepTimeoutMs:180000,team:{concurrency:2,reviewer:leader,maxReworks:2,maxDispatches:20},meeting:{topic,participants,rounds}});setSelected(r.id);setView(await request('leader.get',{runId:r.id}));setRuns(await request('leader.list',{projectId,offset:0,limit:50}));})}>开始有界会议</Button>
+  </section><section className="leader-run" aria-label="会议记录"><div className="section-label">会议历史 <span>{runs.filter(r=>r.meetingId).length}</span></div><select aria-label="会议历史" value={selected||runs.find(r=>r.meetingId)?.id||''} onChange={e=>setSelected(e.target.value)}><option value="" disabled>暂无会议</option>{runs.filter(r=>r.meetingId).map(r=><option key={r.id} value={r.id}>{new Date(r.createdAt).toLocaleString('zh-CN')} · {r.goal.slice(0,60)}</option>)}</select>
+    {meeting&&run&&<><p role="status" aria-label="会议当前状态">{meeting.status}</p><code>Run ID：{run.id} / Meeting：{meeting.id}</code>{run.reason&&<p role="alert">{run.reason}</p>}
+      <div className="leader-buttons">{['draft','running','waiting_approval','awaiting_plan_approval'].includes(run.status)&&<Button variant="outline" disabled={busy} onClick={()=>change(()=>request('leader.pause',{runId:run.id}))}>暂停会议后续请求</Button>}{run.status==='paused'&&<Button disabled={busy} onClick={()=>change(()=>request('leader.resume',{runId:run.id}))}>继续会议</Button>}{activeRunStatuses.includes(run.status)&&<Button variant="destructive" disabled={busy||run.status==='stopping'} onClick={()=>change(()=>request('leader.stop',{runId:run.id}))}>停止会议 Run</Button>}</div>
+      {meeting.agenda&&<><h3>Leader 议程 · {meeting.agenda.rounds} 轮</h3><ul>{meeting.agenda.questions.map(q=><li key={q}>{q}</li>)}</ul><p>原生议程：<code>{meeting.agendaEvidence?.nativeTaskId}</code></p></>}
+      {meeting.messages.map(m=><article key={m.nativeTaskId}><h3>第 {m.round} 轮 · {providerMeta[m.provider].name} · {m.source}</h3><pre>{m.text}</pre><p>{new Date(m.timestamp).toLocaleString('zh-CN')} · <code>{m.nativeTaskId}</code></p><details><summary>原生事件引用</summary><p>{m.rawEventRefs.join(' / ')}</p></details></article>)}
+      {meeting.summary&&<section aria-label="会议决策与草案"><h2>会议决策</h2><p>{meeting.summary.summary}</p><h3>共识</h3><ul>{meeting.summary.consensus.map(s=><li key={s}>{s}</li>)}</ul><h3>分歧</h3><ul>{meeting.summary.disagreements.map(s=><li key={s}>{s}</li>)}</ul><h3>任务草案 · 未批准</h3>{meeting.summary.taskDrafts.map((t,i)=><article key={i}><strong>{t.title}</strong><p>{t.instruction}</p><ul>{t.acceptance.map(a=><li key={a}>{a}</li>)}</ul></article>)}<p>计划生成后仍需在 Leader 页面检查并确认，会议发言不授予执行权限。</p><Button variant="outline" onClick={()=>useStore.getState().setPage('leader')}>查看 Leader 计划与审批</Button></section>}
+    </>}
+  </section></div>;
+}

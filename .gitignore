@@ -1,0 +1,21 @@
+node_modules/
+out/
+release/
+.runtime/
+test-results/
+*.log
+*.sqlite*
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+model-credentials.bin
+workbuddy-pairing.bin
+NVIDIA Corporation/
+# Local acceptance reports, screenshots and historical prompts stay on this machine.
+/docs/*
+!/docs/INSTALLATION.md
+!/docs/RELEASE_1_0_BETA.md
+/Agent_Nexus_Codex_Development_Spec.md
+/Agent_Nexus_M2_to_M5_Codex_Roadmap.md
